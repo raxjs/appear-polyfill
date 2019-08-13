@@ -1,0 +1,31 @@
+{
+  "name": "rax-appear",
+  "version": "0.0.1",
+  "description": "",
+  "author": "rax",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "rax-scripts start --type=component -p 8000",
+    "build": "rax-scripts build --type=component",
+    "test": "rax-scripts test",
+    "lint": "rax-scripts lint --type=component"
+  },
+  "keywords": [
+    "Rax",
+    "rax-component"
+  ],
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "peerDependencies": {
+    "rax": "^1.0.0"
+  },
+  "devDependencies": {
+    "driver-dom": "^1.0.0",
+    "rax": "^1.0.0",
+    "rax-scripts": "^1.2.0",
+    "rax-test-renderer": "^1.0.0",
+    "rax-view": "^1.0.2",
+    "universal-env": "^1.0.1"
+  }
+}
