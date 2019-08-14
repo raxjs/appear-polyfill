@@ -3,9 +3,7 @@ import * as DriverDOM from 'driver-dom';
 import { isWeb } from 'universal-env';
 import { setupAppear } from '../src/index';
 
-if (isWeb) {
-  setupAppear();
-}
+setupAppear();
 
 const list = [];
 for (let index = 1; index <= 100; index++) {

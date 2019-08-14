@@ -1,13 +1,10 @@
 /* eslint-env jest */
 import { createElement } from 'rax';
 import renderer from 'rax-test-renderer';
-import { isWeb } from 'universal-env';
 import View from 'rax-view';
 import { setupAppear } from '../';
 
-if (isWeb) {
-  setupAppear();
-}
+setupAppear();
 
 function AppearNode() {
   return (

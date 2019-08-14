@@ -4,7 +4,7 @@
   "description": "",
   "author": "rax",
   "license": "BSD-3-Clause",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "start": "rax-scripts start -p 8000",
     "build": "rax-scripts build",
