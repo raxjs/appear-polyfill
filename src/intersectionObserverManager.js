@@ -55,13 +55,23 @@ function handleIntersect(entries) {
     const beforeY = parseInt(target.dataset.beforeCurrentY) || currentY;
 
     // is in view
-    if (intersectionRatio > 0.2 && !isTrue(target.dataset.appeared)) {
+    if (
+      intersectionRatio > 0.01 &&
+      !isTrue(target.dataset.appeared) &&
+      !appearOnce(target, 'appear')
+    ) {
       target.dataset.appeared = true;
+      target.dataset.hasAppeared = true;
       target.dispatchEvent(createEvent('appear', {
         direction: currentY > beforeY ? 'up' : 'down'
       }));
-    } else if (intersectionRatio === 0 && isTrue(target.dataset.appeared)) {
+    } else if (
+      intersectionRatio === 0 &&
+      isTrue(target.dataset.appeared) &&
+      !appearOnce(target, 'disappear')
+    ) {
       target.dataset.appeared = false;
+      target.dataset.hasDisappeared = true;
       target.dispatchEvent(createEvent('disappear', {
         direction: currentY > beforeY ? 'up' : 'down'
       }));
@@ -71,8 +81,18 @@ function handleIntersect(entries) {
   });
 }
 
+/**
+ * need appear again when node has isonce or data-once
+ */
+function appearOnce(node, type) {
+  const isOnce = isTrue(node.getAttribute('isonce')) || isTrue(node.getAttribute('data-once'));
+  const appearType = type === 'appear' ? 'hasAppeared' : 'hasDisappeared';
+
+  return isOnce && isTrue(node.dataset[appearType]);
+}
+
 function isTrue(flag) {
-  return flag && flag === 'true';
+  return flag && flag !== 'false';
 }
 
 function createEvent(eventName, data) {
