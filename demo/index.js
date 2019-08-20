@@ -29,6 +29,7 @@ render((
           onDisAppear={() => {
             console.log('disappear: ', item, event.detail.direction);
           }}
+          isonce
         >
           第 {item} 个
         </div>
