@@ -6,7 +6,7 @@
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "scripts": {
-    "start": "rax-scripts start -p 8000",
+    "start": "rax-scripts start",
     "build": "rax-scripts build",
     "test": "rax-scripts test"
   },

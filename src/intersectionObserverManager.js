@@ -2,7 +2,7 @@ import PolyfilledIntersectionObserver from './IntersectionObserver';
 
 // Shared intersectionObserver instance.
 let intersectionObserver;
-const IntersectionObserver = (function(window) {
+const IntersectionObserver = (function (window) {
   if ('IntersectionObserver' in window &&
     'IntersectionObserverEntry' in window &&
     'intersectionRatio' in window.IntersectionObserverEntry.prototype) {
@@ -50,34 +50,39 @@ export function observerElement(element) {
 
 function handleIntersect(entries) {
   entries.forEach((entry) => {
-    const { target, boundingClientRect, intersectionRatio } = entry;
-    const currentY = boundingClientRect.y;
-    const beforeY = parseInt(target.dataset.beforeCurrentY) || currentY;
+    const {
+      target,
+      boundingClientRect,
+      intersectionRatio
+    } = entry;
+    // pollfill 里面没有 top
+    const currentY = boundingClientRect.y || boundingClientRect.top;
+    const beforeY = parseInt(target.getAttribute('data-before-current-y')) || currentY;
 
     // is in view
     if (
       intersectionRatio > 0.01 &&
-      !isTrue(target.dataset.appeared) &&
+      !isTrue(target.getAttribute('data-appeared')) &&
       !appearOnce(target, 'appear')
     ) {
-      target.dataset.appeared = true;
-      target.dataset.hasAppeared = true;
+      target.setAttribute('data-appeared', 'true');
+      target.setAttribute('data-has-appeared', 'true');
       target.dispatchEvent(createEvent('appear', {
         direction: currentY > beforeY ? 'up' : 'down'
       }));
     } else if (
       intersectionRatio === 0 &&
-      isTrue(target.dataset.appeared) &&
+      isTrue(target.getAttribute('data-appeared')) &&
       !appearOnce(target, 'disappear')
     ) {
-      target.dataset.appeared = false;
-      target.dataset.hasDisappeared = true;
+      target.setAttribute('data-appeared', 'false');
+      target.setAttribute('data-has-disappeared', 'true');
       target.dispatchEvent(createEvent('disappear', {
         direction: currentY > beforeY ? 'up' : 'down'
       }));
     }
 
-    target.dataset.beforeCurrentY = currentY;
+    target.setAttribute('data-before-current-y', currentY);
   });
 }
 
@@ -86,9 +91,9 @@ function handleIntersect(entries) {
  */
 function appearOnce(node, type) {
   const isOnce = isTrue(node.getAttribute('isonce')) || isTrue(node.getAttribute('data-once'));
-  const appearType = type === 'appear' ? 'hasAppeared' : 'hasDisappeared';
+  const appearType = type === 'appear' ? 'data-has-appeared' : 'data-has-disappeared';
 
-  return isOnce && isTrue(node.dataset[appearType]);
+  return isOnce && isTrue(node.getAttribute(appearType));
 }
 
 function isTrue(flag) {
