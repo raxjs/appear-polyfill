@@ -1,5 +1,5 @@
 {
   "plugins": [
-    "rax-plugin-component"
+    ["rax-plugin-component", {"targets": ["web", "weex"]}]
   ]
 }

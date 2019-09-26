@@ -1,12 +1,12 @@
 {
   "name": "rax-appear",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "author": "rax",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "scripts": {
-    "start": "rax-scripts start -p 8000",
+    "start": "rax-scripts start",
     "build": "rax-scripts build",
     "test": "rax-scripts test"
   },
