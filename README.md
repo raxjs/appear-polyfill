@@ -6,7 +6,7 @@
 ## 安装
 
 ```bash
-$ npm install rax-appear --save
+$ npm install appear-polyfill --save
 ```
 
 ## 示例
@@ -16,7 +16,7 @@ $ npm install rax-appear --save
 import { createElement, render } from 'rax';
 import * as DriverDOM from 'driver-dom';
 import { isWeb } from 'universal-env';
-import { setupAppear } from '../src/index';
+import { setupAppear } from 'appear-polyfill';
 
 if (isWeb) {
   setupAppear();
