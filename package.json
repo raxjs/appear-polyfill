@@ -6,9 +6,9 @@
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "scripts": {
-    "start": "rax-scripts start",
-    "build": "rax-scripts build",
-    "test": "rax-scripts test",
+    "start": "build-scripts start",
+    "build": "build-scripts build",
+    "test": "build-scripts test",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -22,12 +22,12 @@
     "rax": "^1.0.0"
   },
   "devDependencies": {
+    "@alib/build-scripts": "^0.1.24",
+    "build-plugin-rax-component": "^0.2.11",
     "driver-dom": "^1.0.0",
     "rax": "^1.0.0",
-    "rax-scripts": "^2.0.0",
     "rax-test-renderer": "^1.0.0",
     "rax-view": "^1.0.2",
-    "universal-env": "^1.0.1",
-    "rax-plugin-component": "^0.1.0"
+    "universal-env": "^1.0.1"
   }
 }
