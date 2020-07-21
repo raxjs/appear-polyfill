@@ -3,7 +3,7 @@ import PolyfilledIntersectionObserver from './IntersectionObserver';
 // Shared intersectionObserver instance.
 let intersectionObserver;
 const IntersectionObserver = (function () {
-  if (typeof window !== undefined && 
+  if (typeof window !== 'undefined' && 
     'IntersectionObserver' in window &&
     'IntersectionObserverEntry' in window &&
     'intersectionRatio' in window.IntersectionObserverEntry.prototype) {
@@ -30,7 +30,7 @@ const defaultOptions = {
   threshold: generateThreshold(10)
 };
 
-export function createIntersectionObserver(options = defaultOptions) 
+export function createIntersectionObserver(options = defaultOptions) {
   intersectionObserver = new IntersectionObserver(handleIntersect, options);
 }
 
