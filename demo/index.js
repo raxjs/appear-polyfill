@@ -26,7 +26,7 @@ render((
           onAppear={(event) => {
             console.log('appear: ', item, event.detail.direction);
           }}
-          onDisAppear={() => {
+          onDisappear={() => {
             console.log('disappear: ', item, event.detail.direction);
           }}
           isonce

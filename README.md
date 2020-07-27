@@ -1,7 +1,7 @@
 [![npm](https://img.shields.io/npm/v/rax-appear.svg)](https://www.npmjs.com/package/rax-appear)
 
 **描述：**
-封装了组件 Appear 和 DisAppear 的监听。
+封装了组件 Appear 和 Disappear 的监听。
 
 ## 安装
 
@@ -43,7 +43,7 @@ render((
           onAppear={(event) => {
             console.log('appear: ', item, event.detail.direction);
           }}
-          onDisAppear={() => {
+          onDisappear={() => {
             console.log('disappear: ', item, event.detail.direction);
           }}
         >
