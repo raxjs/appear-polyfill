@@ -22,10 +22,11 @@
     "rax": "^1.0.0"
   },
   "devDependencies": {
-    "@alib/build-scripts": "^0.1.24",
+    "@alib/build-scripts": "^0.1.28",
     "build-plugin-rax-component": "^0.2.11",
     "driver-dom": "^1.0.0",
     "rax": "^1.0.0",
+    "rax-jest-config": "^1.0.0",
     "rax-test-renderer": "^1.0.0",
     "rax-view": "^1.0.2",
     "universal-env": "^1.0.1"
