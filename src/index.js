@@ -21,7 +21,15 @@ const injectEventListenerHook = (instances = [], Node) => {
   };
 };
 
-export function setupAppear(win = window) {
+export function setupAppear(win) {
+  if (!win) {
+    if (typeof window !== 'undefined') {
+      win = window;
+    } else {
+      return;
+    }
+  }
+
   createIntersectionObserver();
   return injectEventListenerHook([], win.Node);
 }
