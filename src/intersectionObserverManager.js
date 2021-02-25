@@ -2,8 +2,9 @@ import PolyfilledIntersectionObserver from './IntersectionObserver';
 
 // Shared intersectionObserver instance.
 let intersectionObserver;
-const IntersectionObserver = (function (window) {
-  if ('IntersectionObserver' in window &&
+const IntersectionObserver = (function () {
+  if (typeof window !== 'undefined' && 
+    'IntersectionObserver' in window &&
     'IntersectionObserverEntry' in window &&
     'intersectionRatio' in window.IntersectionObserverEntry.prototype) {
     // features are natively supported
@@ -12,7 +13,7 @@ const IntersectionObserver = (function (window) {
     // polyfilled IntersectionObserver
     return PolyfilledIntersectionObserver;
   }
-})(window);
+})();
 
 function generateThreshold(number) {
   const thresholds = [];
