@@ -1,6 +1,6 @@
 {
   "name": "appear-polyfill",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "author": "rax",
   "license": "BSD-3-Clause",
@@ -31,5 +31,5 @@
     "rax-view": "^1.0.2",
     "universal-env": "^1.0.1"
   },
-  "homepage": "https://unpkg.com/appear-polyfill@0.1.1-1/build/index.html"
+  "homepage": "https://unpkg.com/appear-polyfill@0.1.1/build/index.html"
 }
