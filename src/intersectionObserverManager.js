@@ -24,13 +24,17 @@ function generateThreshold(number) {
   return thresholds;
 }
 
-const defaultOptions = {
-  root: null,
-  rootMargin: '0px',
-  threshold: generateThreshold(10)
+const defaultCustomOptions = {
+  rootMarginBottom: 0
 };
 
-export function createIntersectionObserver(options = defaultOptions) {
+export function createIntersectionObserver(customOptions = defaultCustomOptions) {
+  const { rootMarginBottom } = customOptions;
+  const options = {
+    root: null,
+    rootMargin: `0px 0px ${rootMarginBottom}px 0px`,
+    threshold: generateThreshold(10)
+  };
   intersectionObserver = new IntersectionObserver(handleIntersect, options);
 }
 
@@ -59,21 +63,34 @@ function handleIntersect(entries) {
     // pollfill 里面没有 top
     const currentY = boundingClientRect.y || boundingClientRect.top;
     const beforeY = parseInt(target.getAttribute('data-before-current-y')) || currentY;
+    const screenHeight = window.screen.height;
 
     // is in view
     if (
       intersectionRatio > 0.01 &&
       !isTrue(target.getAttribute('data-appeared')) &&
-      !appearOnce(target, 'appear')
+      !appearOnce(target, 'appear') &&
+      screenHeight > currentY
     ) {
       target.setAttribute('data-appeared', 'true');
       target.setAttribute('data-has-appeared', 'true');
       target.dispatchEvent(createEvent('appear', {
         direction: currentY > beforeY ? 'up' : 'down'
       }));
+    } else if(
+      intersectionRatio > 0.01 &&
+      !isTrue(target.getAttribute('data-preappear')) &&
+      !appearOnce(target, 'appear') &&
+      screenHeight < currentY
+    ) {
+      target.setAttribute('data-preappear', 'true');
+      target.dispatchEvent(createEvent('preappear', {
+        direction: currentY > beforeY ? 'up' : 'down'
+      }));
     } else if (
       intersectionRatio === 0 &&
       isTrue(target.getAttribute('data-appeared')) &&
+      !appearOnce(target, 'appear') &&
       !appearOnce(target, 'disappear')
     ) {
       target.setAttribute('data-appeared', 'false');
