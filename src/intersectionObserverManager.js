@@ -83,7 +83,6 @@ function handleIntersect(entries) {
     } else if (
       intersectionRatio === 0 &&
       isTrue(target.getAttribute('data-appeared')) &&
-      !appearOnce(target, 'appear') &&
       !appearOnce(target, 'disappear')
     ) {
       target.setAttribute('data-appeared', 'false');
