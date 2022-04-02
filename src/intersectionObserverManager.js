@@ -25,14 +25,14 @@ function generateThreshold(number) {
 }
 
 const defaultCustomOptions = {
-  rootMarginBottom: 0
+  endReachedThreshold: 0
 };
 
 export function createIntersectionObserver(customOptions = defaultCustomOptions) {
-  const { rootMarginBottom } = customOptions;
+  const { endReachedThreshold } = customOptions;
   const options = {
     root: null,
-    rootMargin: `0px 0px ${rootMarginBottom}px 0px`,
+    rootMargin: `0px 0px ${endReachedThreshold}px 0px`,
     threshold: generateThreshold(10)
   };
   intersectionObserver = new IntersectionObserver(handleIntersect, options);
