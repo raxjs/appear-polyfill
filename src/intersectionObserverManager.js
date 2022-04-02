@@ -63,7 +63,7 @@ function handleIntersect(entries) {
     // pollfill 里面没有 top
     const currentY = boundingClientRect.y || boundingClientRect.top;
     const beforeY = parseInt(target.getAttribute('data-before-current-y')) || currentY;
-    const screenHeight = window.screen.height;
+    const screenHeight = window.innerWidth;
 
     // is in view
     if (
@@ -77,7 +77,7 @@ function handleIntersect(entries) {
       target.dispatchEvent(createEvent('appear', {
         direction: currentY > beforeY ? 'up' : 'down'
       }));
-    } else if(
+    } else if (
       intersectionRatio > 0.01 &&
       !isTrue(target.getAttribute('data-preappear')) &&
       !appearOnce(target, 'appear') &&
