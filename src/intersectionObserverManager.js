@@ -72,7 +72,7 @@ function handleIntersect(entries) {
       !appearOnce(target, 'appear')
     ) {
       const isInView = screenHeight >= currentY;
-      const isPreview = (screenHeight < currentY) && isTrue(target.getAttribute('isAdvance'));
+      const isPreview = (screenHeight < currentY) && isTrue(target.getAttribute('is-advance'));
       if(isInView || isPreview) {
         target.setAttribute('data-appeared', 'true');
         target.setAttribute('data-has-appeared', 'true');
