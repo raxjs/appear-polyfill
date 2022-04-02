@@ -63,30 +63,23 @@ function handleIntersect(entries) {
     // pollfill 里面没有 top
     const currentY = boundingClientRect.y || boundingClientRect.top;
     const beforeY = parseInt(target.getAttribute('data-before-current-y')) || currentY;
-    const screenHeight = window.innerWidth;
+    const screenHeight = window.innerHeight;
 
     // is in view
     if (
       intersectionRatio > 0.01 &&
       !isTrue(target.getAttribute('data-appeared')) &&
-      !appearOnce(target, 'appear') &&
-      screenHeight > currentY
+      !appearOnce(target, 'appear')
     ) {
-      target.setAttribute('data-appeared', 'true');
-      target.setAttribute('data-has-appeared', 'true');
-      target.dispatchEvent(createEvent('appear', {
-        direction: currentY > beforeY ? 'up' : 'down'
-      }));
-    } else if (
-      intersectionRatio > 0.01 &&
-      !isTrue(target.getAttribute('data-preappear')) &&
-      !appearOnce(target, 'appear') &&
-      screenHeight < currentY
-    ) {
-      target.setAttribute('data-preappear', 'true');
-      target.dispatchEvent(createEvent('preappear', {
-        direction: currentY > beforeY ? 'up' : 'down'
-      }));
+      const isInView = screenHeight >= currentY;
+      const isPreview = (screenHeight < currentY) && isTrue(target.getAttribute('early'));
+      if(isInView || isPreview) {
+        target.setAttribute('data-appeared', 'true');
+        target.setAttribute('data-has-appeared', 'true');
+        target.dispatchEvent(createEvent('appear', {
+          direction: currentY > beforeY ? 'up' : 'down'
+        }));
+      }
     } else if (
       intersectionRatio === 0 &&
       isTrue(target.getAttribute('data-appeared')) &&
