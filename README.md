@@ -9,17 +9,6 @@
 $ npm install appear-polyfill --save
 ```
 
-## 配置
-
-``` ts
-interface Config {
-  window: Window; // Window 对象
-  options: {
-    endReachedThreshold: number; // 加载更多的底部偏移距离
-  }
-}
-```
-
 ## 示例
 
 
@@ -30,9 +19,7 @@ import { isWeb } from 'universal-env';
 import { setupAppear } from 'appear-polyfill';
 
 if (isWeb) {
-  setupAppear(window, {
-    rootMarginBottom: 0
-  });
+  setupAppear(window);
 }
 
 const list = [];
@@ -67,3 +54,10 @@ render((
   </div>
 ), document.body, { driver: DriverDOM });
 ```
+## 配置项
+
+**endReachedThreshold**
+
+- 类型：`number`
+
+支持预加载浏览器视口底部更多偏移的内容，单位 `px`。
