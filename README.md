@@ -61,3 +61,41 @@ render((
 - 类型：`number`
 
 支持预加载浏览器视口底部更多偏移的内容，单位 `px`。为需要预加载的元素设置 `is-advance` 属性为 `true`。
+
+```jsx
+import { createElement, render } from 'rax';
+import DriverUniversal from 'driver-universal';
+import Image from 'rax-image';
+
+import { setupAppear } from 'appear-polyfill';
+
+if (isWeb) {
+  setupAppear(window, {
+    endReachedThreshold: 100
+  });
+}
+
+const App = () => {
+  const rendderImage = () => (
+    <Image
+      is-advance
+      source={{
+        uri: 'https://gw.alicdn.com/tfs/TB1bBD0zCzqK1RjSZFpXXakSXXa-68-67.png',
+      }}
+      style={{
+        height: 300,
+        width: '100%',
+      }}
+    />
+  );
+  return (
+    <div>
+      {
+        new Array(10).map(rendderImage)
+      }
+    </div>
+  );
+};
+
+render(<App />, document.body, { driver: DriverUniversal });
+```
