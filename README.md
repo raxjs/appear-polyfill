@@ -78,7 +78,7 @@ if (isWeb) {
 const App = () => {
   const rendderImage = () => (
     <Image
-      pre-appear
+      preAppear
       source={{
         uri: 'https://gw.alicdn.com/tfs/TB1bBD0zCzqK1RjSZFpXXakSXXa-68-67.png',
       }}
