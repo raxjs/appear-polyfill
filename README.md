@@ -60,7 +60,7 @@ render((
 
 - 类型：`number`
 
-支持预加载浏览器视口底部更多偏移的内容，单位 `px`。为需要预加载的元素设置 `is-advance` 属性为 `true`。
+支持预加载浏览器视口底部更多偏移的内容，单位 `px`。为需要预加载的元素设置 `pre-appear` 属性为 `true`。
 
 ```jsx
 import { createElement, render } from 'rax';
@@ -78,7 +78,7 @@ if (isWeb) {
 const App = () => {
   const rendderImage = () => (
     <Image
-      is-advance
+      pre-appear
       source={{
         uri: 'https://gw.alicdn.com/tfs/TB1bBD0zCzqK1RjSZFpXXakSXXa-68-67.png',
       }}
