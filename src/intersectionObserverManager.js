@@ -1,7 +1,8 @@
 import PolyfilledIntersectionObserver from './IntersectionObserver';
 
 // Shared intersectionObserver instance.
-let intersectionObserver;
+const intersectionObserverMap = {}
+
 const IntersectionObserver = (function () {
   if (typeof window !== 'undefined' && 
     'IntersectionObserver' in window &&
@@ -25,33 +26,46 @@ function generateThreshold(number) {
 }
 
 const defaultCustomOptions = {
-  endReachedThreshold: 0
+  threshold: generateThreshold(10),
+  rootMargin: '0px 0px 0px 0px',
 };
 
-export function createIntersectionObserver(customOptions = defaultCustomOptions) {
-  const { endReachedThreshold } = customOptions;
-  const _endReachedThreshold = endReachedThreshold || defaultCustomOptions.endReachedThreshold;
+const handleMap = {
+  default: handleIntersect,
+  pre: handlePreIntersect
+}
+
+export function createIntersectionObserver(type, customOptions = defaultCustomOptions) {
+  const { threshold, preAppear } = customOptions;
   const options = {
     root: null,
-    rootMargin: `0px 0px ${_endReachedThreshold}px 0px`,
-    threshold: generateThreshold(10)
+    rootMargin: (type === 'pre' && preAppear) ? preAppear : defaultCustomOptions.rootMargin,
+    threshold: threshold ?? defaultCustomOptions.threshold
   };
-  intersectionObserver = new IntersectionObserver(handleIntersect, options);
+  intersectionObserverMap[type] = new IntersectionObserver(handleMap[type], options);
+
+  return _observerElement(type)
 }
 
 export function destroyIntersectionObserver() {
-  if (intersectionObserver) {
-    intersectionObserver.disconnect();
-    intersectionObserver = null;
-  }
+  (Object.keys(intersectionObserverMap) || []).forEach((key) => {
+    const current = intersectionObserverMap[key];
+    if (current) {
+      current.disconnect();
+      current = null;
+    }
+  });
 }
 
-export function observerElement(element) {
-  if (!intersectionObserver) createIntersectionObserver();
+function _observerElement(type) {
+  return function observerElement(element) {
+    if (!intersectionObserverMap[type]) createIntersectionObserver();
 
-  if (element === document) element = document.documentElement;
+    if (element === document) element = document.documentElement;
+  
+    intersectionObserverMap[type].observe(element);
+  }
 
-  intersectionObserver.observe(element);
 }
 
 function handleIntersect(entries) {
@@ -64,7 +78,6 @@ function handleIntersect(entries) {
     // pollfill 里面没有 top
     const currentY = boundingClientRect.y || boundingClientRect.top;
     const beforeY = parseInt(target.getAttribute('data-before-current-y')) || currentY;
-    const screenHeight = window.innerHeight;
 
     // is in view
     if (
@@ -72,15 +85,11 @@ function handleIntersect(entries) {
       !isTrue(target.getAttribute('data-appeared')) &&
       !appearOnce(target, 'appear')
     ) {
-      const isInView = screenHeight >= currentY;
-      const isPreAppear = (screenHeight < currentY) && isTrue(target.getAttribute('pre-appear'));
-      if (isInView || isPreAppear) {
-        target.setAttribute('data-appeared', 'true');
-        target.setAttribute('data-has-appeared', 'true');
-        target.dispatchEvent(createEvent('appear', {
-          direction: currentY > beforeY ? 'up' : 'down'
-        }));
-      }
+      target.setAttribute('data-appeared', 'true');
+      target.setAttribute('data-has-appeared', 'true');
+      target.dispatchEvent(createEvent('appear', {
+        direction: currentY > beforeY ? 'up' : 'down'
+      }));
     } else if (
       intersectionRatio === 0 &&
       isTrue(target.getAttribute('data-appeared')) &&
@@ -94,6 +103,31 @@ function handleIntersect(entries) {
     }
 
     target.setAttribute('data-before-current-y', currentY);
+  });
+}
+
+function handlePreIntersect(entries) {
+  entries.forEach((entry) => {
+    const {
+      target,
+      boundingClientRect,
+      intersectionRatio
+    } = entry;
+    // pollfill 里面没有 top
+    const currentY = boundingClientRect.y || boundingClientRect.top;
+    const beforeY = parseInt(target.getAttribute('data-before-current-y')) || currentY;
+
+    // is in view
+    if (
+      intersectionRatio > 0.01 &&
+      !isTrue(target.getAttribute('data-pre-appeared')) &&
+      !appearOnce(target, 'appear')
+    ) {
+      target.setAttribute('data-pre-appeared', 'true');
+      target.dispatchEvent(createEvent('preappear', {
+        direction: currentY > beforeY ? 'up' : 'down'
+      }));
+    }
   });
 }
 
