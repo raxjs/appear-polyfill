@@ -1,7 +1,7 @@
 /**
  * Simulate appear & disappear events.
  */
-import { createIntersectionObserver, destroyIntersectionObserver } from './intersectionObserverManager';
+import { createIntersectionObserver, destroyAllIntersectionObserver, IntersectionObserverMode } from './intersectionObserverManager';
 
 // hijack Node.prototype.addEventListener
 const injectEventListenerHook = (events = [], Node, observerElement) => {
@@ -17,12 +17,12 @@ const injectEventListenerHook = (events = [], Node, observerElement) => {
 
   return function unsetup() {
     Node.prototype.addEventListener = nativeAddEventListener;
-    destroyIntersectionObserver();
+    destroyAllIntersectionObserver();
   };
 };
 
 export function setupPreAppear(win, options) {
-  const observerElement = createIntersectionObserver('pre', options);
+  const observerElement = createIntersectionObserver(IntersectionObserverMode.PRE_APPEAR, options);
   injectEventListenerHook(['preappear'], win.Node, observerElement);
 }
 
@@ -39,6 +39,6 @@ export function setupAppear(win, options) {
     setupPreAppear(win, options);
   }
 
-  const observerElement = createIntersectionObserver('default', options);
+  const observerElement = createIntersectionObserver(IntersectionObserverMode.DEFAULT, options);
   return injectEventListenerHook(['appear', 'disappear'], win.Node, observerElement);
 }

@@ -3,6 +3,16 @@ import PolyfilledIntersectionObserver from './IntersectionObserver';
 // Shared intersectionObserver instance.
 const intersectionObserverMap = {}
 
+export const IntersectionObserverMode = {
+  DEFAULT: 'default',
+  PRE_APPEAR: 'pre'
+}
+
+const intersectionObserverHandleIMap = {
+  [IntersectionObserverMode.DEFAULT]: handleIntersect,
+  [IntersectionObserverMode.PRE_APPEAR]: handlePreIntersect
+}
+
 const IntersectionObserver = (function () {
   if (typeof window !== 'undefined' && 
     'IntersectionObserver' in window &&
@@ -30,24 +40,20 @@ const defaultCustomOptions = {
   rootMargin: '0px 0px 0px 0px',
 };
 
-const handleMap = {
-  default: handleIntersect,
-  pre: handlePreIntersect
-}
-
+/** suggest default & pre modes */
 export function createIntersectionObserver(type, customOptions = defaultCustomOptions) {
   const { threshold, preAppear } = customOptions;
   const options = {
     root: null,
-    rootMargin: (type === 'pre' && preAppear) ? preAppear : defaultCustomOptions.rootMargin,
+    rootMargin: type === IntersectionObserverMode.PRE_APPEAR ? preAppear : defaultCustomOptions.rootMargin,
     threshold: threshold ?? defaultCustomOptions.threshold
   };
-  intersectionObserverMap[type] = new IntersectionObserver(handleMap[type], options);
+  intersectionObserverMap[type] = new IntersectionObserver(intersectionObserverHandleIMap[type], options);
 
   return _observerElement(type)
 }
 
-export function destroyIntersectionObserver() {
+export function destroyAllIntersectionObserver() {
   (Object.keys(intersectionObserverMap) || []).forEach((key) => {
     const current = intersectionObserverMap[key];
     if (current) {
@@ -75,9 +81,7 @@ function handleIntersect(entries) {
       boundingClientRect,
       intersectionRatio
     } = entry;
-    // pollfill 里面没有 top
-    const currentY = boundingClientRect.y || boundingClientRect.top;
-    const beforeY = parseInt(target.getAttribute('data-before-current-y')) || currentY;
+    const { currentY, beforeY } = getElementY(boundingClientRect);
 
     // is in view
     if (
@@ -113,9 +117,7 @@ function handlePreIntersect(entries) {
       boundingClientRect,
       intersectionRatio
     } = entry;
-    // pollfill 里面没有 top
-    const currentY = boundingClientRect.y || boundingClientRect.top;
-    const beforeY = parseInt(target.getAttribute('data-before-current-y')) || currentY;
+    const { currentY, beforeY } = getElementY(boundingClientRect);
 
     // is in view
     if (
@@ -151,4 +153,11 @@ function createEvent(eventName, data) {
     cancelable: true,
     detail: data
   });
+}
+
+function getElementY(boundingClientRect) {
+  // pollfill 里面没有 top
+  const currentY = boundingClientRect.y || boundingClientRect.top;
+  const beforeY = parseInt(target.getAttribute('data-before-current-y')) || currentY;
+  return { currentY, beforeY };
 }
