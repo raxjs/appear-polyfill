@@ -14,7 +14,7 @@ const intersectionObserverHandleIMap = {
 }
 
 const IntersectionObserver = (function () {
-  if (typeof window !== 'undefined' && 
+  if (typeof window !== 'undefined' &&
     'IntersectionObserver' in window &&
     'IntersectionObserverEntry' in window &&
     'intersectionRatio' in window.IntersectionObserverEntry.prototype) {
@@ -68,7 +68,7 @@ function _observerElement(type) {
     if (!intersectionObserverMap[type]) createIntersectionObserver();
 
     if (element === document) element = document.documentElement;
-  
+
     intersectionObserverMap[type].observe(element);
   }
 

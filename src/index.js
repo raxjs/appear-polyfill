@@ -7,9 +7,9 @@ import { createIntersectionObserver, destroyAllIntersectionObserver, Intersectio
 const injectEventListenerHook = (events = [], Node, observerElement) => {
   let nativeAddEventListener = Node.prototype.addEventListener;
 
-  Node.prototype.addEventListener = function(eventName, eventHandler, useCapture, doNotWatch) {
+  Node.prototype.addEventListener = function (eventName, eventHandler, useCapture, doNotWatch) {
     const lowerCaseEventName = eventName && String(eventName).toLowerCase();
-    const isAppearEvent = events.includes(lowerCaseEventName);
+    const isAppearEvent = events.some((item) => (item === lowerCaseEventName));
     if (isAppearEvent) observerElement(this);
 
     nativeAddEventListener.call(this, eventName, eventHandler, useCapture);
@@ -35,7 +35,7 @@ export function setupAppear(win, options) {
     }
   }
 
-  if(options?.preAppear) {
+  if (options?.preAppear) {
     setupPreAppear(win, options);
   }
 

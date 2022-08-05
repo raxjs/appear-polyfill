@@ -56,11 +56,11 @@ render((
 ```
 ## 配置项
 
-**endReachedThreshold**
+**preAppear**
 
-- 类型：`number`
+- 类型：`string`
 
-支持预加载浏览器视口底部更多偏移的内容，单位 `px`。为需要预加载的元素设置 `pre-appear` 属性为 `true`。
+支持预加载浏览器视口底部更多偏移的内容，单位 `px`。为需要预加载的元素设置 `preappear` 属性为 `true`。
 
 ```jsx
 import { createElement, render } from 'rax';
@@ -71,7 +71,7 @@ import { setupAppear } from 'appear-polyfill';
 
 if (isWeb) {
   setupAppear(window, {
-    endReachedThreshold: 100
+    preAppear: '0px 0px 100px 0px'
   });
 }
 
