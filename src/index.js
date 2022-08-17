@@ -1,15 +1,15 @@
 /**
  * Simulate appear & disappear events.
  */
-import { createIntersectionObserver, destroyIntersectionObserver, observerElement } from './intersectionObserverManager';
+import { createIntersectionObserver, destroyAllIntersectionObserver, IntersectionObserverMode } from './intersectionObserverManager';
 
 // hijack Node.prototype.addEventListener
-const injectEventListenerHook = (instances = [], Node) => {
+const injectEventListenerHook = (events = [], Node, observerElement) => {
   let nativeAddEventListener = Node.prototype.addEventListener;
 
-  Node.prototype.addEventListener = function(eventName, eventHandler, useCapture, doNotWatch) {
+  Node.prototype.addEventListener = function (eventName, eventHandler, useCapture, doNotWatch) {
     const lowerCaseEventName = eventName && String(eventName).toLowerCase();
-    const isAppearEvent = lowerCaseEventName === 'appear' || lowerCaseEventName === 'disappear';
+    const isAppearEvent = events.some((item) => (item === lowerCaseEventName));
     if (isAppearEvent) observerElement(this);
 
     nativeAddEventListener.call(this, eventName, eventHandler, useCapture);
@@ -17,11 +17,16 @@ const injectEventListenerHook = (instances = [], Node) => {
 
   return function unsetup() {
     Node.prototype.addEventListener = nativeAddEventListener;
-    destroyIntersectionObserver();
+    destroyAllIntersectionObserver();
   };
 };
 
-export function setupAppear(win) {
+export function setupPreAppear(win, options) {
+  const observerElement = createIntersectionObserver(IntersectionObserverMode.PRE_APPEAR, options);
+  injectEventListenerHook(['preappear'], win.Node, observerElement);
+}
+
+export function setupAppear(win, options) {
   if (!win) {
     if (typeof window !== 'undefined') {
       win = window;
@@ -30,6 +35,10 @@ export function setupAppear(win) {
     }
   }
 
-  createIntersectionObserver();
-  return injectEventListenerHook([], win.Node);
+  if (options?.preAppear) {
+    setupPreAppear(win, options);
+  }
+
+  const observerElement = createIntersectionObserver(IntersectionObserverMode.DEFAULT, options);
+  return injectEventListenerHook(['appear', 'disappear'], win.Node, observerElement);
 }

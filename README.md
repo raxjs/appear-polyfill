@@ -19,7 +19,7 @@ import { isWeb } from 'universal-env';
 import { setupAppear } from 'appear-polyfill';
 
 if (isWeb) {
-  setupAppear();
+  setupAppear(window);
 }
 
 const list = [];
@@ -53,4 +53,49 @@ render((
     })}
   </div>
 ), document.body, { driver: DriverDOM });
+```
+## 配置项
+
+**preAppear**
+
+- 类型：`string`
+
+支持预加载浏览器视口底部更多偏移的内容，单位 `px`。为需要预加载的元素设置 `preappear` 事件。
+
+```jsx
+import { createElement, render } from 'rax';
+import DriverUniversal from 'driver-universal';
+import Image from 'rax-image';
+
+import { setupAppear } from 'appear-polyfill';
+
+if (isWeb) {
+  setupAppear(window, {
+    preAppear: '0px 0px 100px 0px'
+  });
+}
+
+const App = () => {
+  const rendderImage = () => (
+    <Image
+      onPreappear={(e) => { console.log(e); }}
+      source={{
+        uri: 'https://gw.alicdn.com/tfs/TB1bBD0zCzqK1RjSZFpXXakSXXa-68-67.png',
+      }}
+      style={{
+        height: 300,
+        width: '100%',
+      }}
+    />
+  );
+  return (
+    <div>
+      {
+        new Array(10).map(rendderImage)
+      }
+    </div>
+  );
+};
+
+render(<App />, document.body, { driver: DriverUniversal });
 ```
