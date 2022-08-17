@@ -60,7 +60,7 @@ render((
 
 - 类型：`string`
 
-支持预加载浏览器视口底部更多偏移的内容，单位 `px`。为需要预加载的元素设置 `preappear` 属性为 `true`。
+支持预加载浏览器视口底部更多偏移的内容，单位 `px`。为需要预加载的元素设置 `preappear` 事件。
 
 ```jsx
 import { createElement, render } from 'rax';
@@ -78,7 +78,7 @@ if (isWeb) {
 const App = () => {
   const rendderImage = () => (
     <Image
-      pre-appear
+      onPreappear={(e) => { console.log(e); }}
       source={{
         uri: 'https://gw.alicdn.com/tfs/TB1bBD0zCzqK1RjSZFpXXakSXXa-68-67.png',
       }}

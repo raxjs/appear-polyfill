@@ -69,6 +69,8 @@ function _observerElement(type) {
 
     if (element === document) element = document.documentElement;
 
+    if (type === IntersectionObserverMode.PRE_APPEAR && !isTrue(target.getAttribute('data-pre-appear'))) return;
+
     intersectionObserverMap[type].observe(element);
   }
 
