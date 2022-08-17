@@ -158,7 +158,7 @@ function createEvent(eventName, data) {
 }
 
 function getElementY(boundingClientRect) {
-  // pollfill 里面没有 top
+  // pollfill doesn't have top attribute
   const currentY = boundingClientRect.y || boundingClientRect.top;
   const beforeY = parseInt(target.getAttribute('data-before-current-y')) || currentY;
   return { currentY, beforeY };
