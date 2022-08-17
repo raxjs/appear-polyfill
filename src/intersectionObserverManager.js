@@ -66,14 +66,9 @@ export function destroyAllIntersectionObserver() {
 function _observerElement(type) {
   return function observerElement(element) {
     if (!intersectionObserverMap[type]) createIntersectionObserver();
-
     if (element === document) element = document.documentElement;
-
-    if (type === IntersectionObserverMode.PRE_APPEAR && !isTrue(target.getAttribute('data-pre-appear'))) return;
-
     intersectionObserverMap[type].observe(element);
   }
-
 }
 
 function handleIntersect(entries) {
@@ -83,7 +78,7 @@ function handleIntersect(entries) {
       boundingClientRect,
       intersectionRatio
     } = entry;
-    const { currentY, beforeY } = getElementY(boundingClientRect);
+    const { currentY, beforeY } = getElementY(target, boundingClientRect);
 
     // is in view
     if (
@@ -119,7 +114,7 @@ function handlePreIntersect(entries) {
       boundingClientRect,
       intersectionRatio
     } = entry;
-    const { currentY, beforeY } = getElementY(boundingClientRect);
+    const { currentY, beforeY } = getElementY(target, boundingClientRect);
 
     // is in view
     if (
@@ -157,7 +152,7 @@ function createEvent(eventName, data) {
   });
 }
 
-function getElementY(boundingClientRect) {
+function getElementY(target, boundingClientRect) {
   // pollfill doesn't have top attribute
   const currentY = boundingClientRect.y || boundingClientRect.top;
   const beforeY = parseInt(target.getAttribute('data-before-current-y')) || currentY;
