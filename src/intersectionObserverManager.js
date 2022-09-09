@@ -1,7 +1,7 @@
 import PolyfilledIntersectionObserver from './IntersectionObserver';
 
 // Shared intersectionObserver instance.
-const intersectionObserverMap = {}
+let intersectionObserverMap = {}
 
 export const IntersectionObserverMode = {
   DEFAULT: 'default',
@@ -58,9 +58,9 @@ export function destroyAllIntersectionObserver() {
     const current = intersectionObserverMap[key];
     if (current) {
       current.disconnect();
-      current = null;
     }
   });
+  intersectionObserverMap = null;
 }
 
 function _observerElement(type) {
