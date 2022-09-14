@@ -60,7 +60,7 @@ export function destroyAllIntersectionObserver() {
       current.disconnect();
     }
   });
-  intersectionObserverMap = null;
+  intersectionObserverMap = {};
 }
 
 function _observerElement(type) {
