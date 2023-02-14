@@ -1,33 +1,15 @@
-import PolyfilledIntersectionObserver from './IntersectionObserver';
+import { IntersectionObserverMode, SetupOptions } from './types';
 
 // Shared intersectionObserver instance.
 let intersectionObserverMap = {}
-
-export const IntersectionObserverMode = {
-  DEFAULT: 'default',
-  PRE_APPEAR: 'pre'
-}
 
 const intersectionObserverHandleIMap = {
   [IntersectionObserverMode.DEFAULT]: handleIntersect,
   [IntersectionObserverMode.PRE_APPEAR]: handlePreIntersect
 }
 
-const IntersectionObserver = (function () {
-  if (typeof window !== 'undefined' &&
-    'IntersectionObserver' in window &&
-    'IntersectionObserverEntry' in window &&
-    'intersectionRatio' in window.IntersectionObserverEntry.prototype) {
-    // features are natively supported
-    return window.IntersectionObserver;
-  } else {
-    // polyfilled IntersectionObserver
-    return PolyfilledIntersectionObserver;
-  }
-})();
-
 function generateThreshold(number) {
-  const thresholds = [];
+  const thresholds: number[] = [];
   for (let index = 0; index < number; index++) {
     thresholds.push(index / number);
   }
@@ -35,39 +17,46 @@ function generateThreshold(number) {
   return thresholds;
 }
 
-const defaultCustomOptions = {
+const defaultOptions = {
   threshold: generateThreshold(10),
   rootMargin: '0px 0px 0px 0px',
 };
 
-/** suggest default & pre modes */
-export function createIntersectionObserver(type, customOptions = defaultCustomOptions) {
-  const { threshold, preAppear } = customOptions;
-  const options = {
-    root: null,
-    rootMargin: type === IntersectionObserverMode.PRE_APPEAR ? preAppear : defaultCustomOptions.rootMargin,
-    threshold: threshold ?? defaultCustomOptions.threshold
-  };
-  intersectionObserverMap[type] = new IntersectionObserver(intersectionObserverHandleIMap[type], options);
-
-  return _observerElement(type)
+export function createIntersectionObserver(
+  mode: IntersectionObserverMode,
+  IntersectionObserver,
+  options: SetupOptions = {},
+) {
+  const shallowOption = Object.assign({}, options, defaultOptions);
+  const { threshold, preAppear, rootMargin } = shallowOption;
+  intersectionObserverMap[mode] = new IntersectionObserver(
+    intersectionObserverHandleIMap[mode],
+    {
+      root: null,
+      rootMargin: mode === IntersectionObserverMode.PRE_APPEAR ? preAppear : rootMargin,
+      threshold: threshold
+    }
+  );
+  return _observerElement(mode)
 }
 
 export function destroyAllIntersectionObserver() {
-  (Object.keys(intersectionObserverMap) || []).forEach((key) => {
+  for (let key in intersectionObserverMap) {
     const current = intersectionObserverMap[key];
     if (current) {
       current.disconnect();
     }
-  });
+  }
   intersectionObserverMap = {};
 }
 
-function _observerElement(type) {
-  return function observerElement(element) {
-    if (!intersectionObserverMap[type]) createIntersectionObserver();
-    if (element === document) element = document.documentElement;
-    intersectionObserverMap[type].observe(element);
+function _observerElement(mode: IntersectionObserverMode) {
+  return function observerElement(eventTarget: EventTarget) {
+    if (eventTarget === document) {
+      eventTarget = document.documentElement;
+    }
+    const observer = intersectionObserverMap[mode];
+    observer.observe(eventTarget);
   }
 }
 
