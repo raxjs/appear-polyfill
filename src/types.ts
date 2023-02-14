@@ -1,6 +1,6 @@
 export interface SetupOptions {
   // The method to load the IntersectionObserver instance.
-  loadIntersectionObserver?: () => Promise<typeof window.IntersectionObserver>;
+  intersectionObserverLoader?: () => Promise<typeof window.IntersectionObserver>;
 
   // The thresholds array of the IntersectionObserver instance.
   threshold?: number[];

@@ -4,9 +4,9 @@
   "description": "Simulate appear & disappear events.",
   "author": "Rax Team & ICE Team",
   "license": "BSD-3-Clause",
-  "type": "module",
-  "main": "./esm/index.js",
-  "module": "./esm/index.js",
+  "main": "esm/index.js",
+  "module": "esm/index.js",
+  "types": "esm/index.d.ts",
   "scripts": {
     "start": "ice-pkg start",
     "build": "ice-pkg build",
@@ -21,7 +21,8 @@
   },
   "devDependencies": {
     "@ice/pkg": "^1.5.0",
-    "@ice/pkg-plugin-docusaurus": "^1.4.3"
+    "@ice/pkg-plugin-docusaurus": "^1.4.3",
+    "react-dom": "^18.2.0"
   },
   "homepage": "https://unpkg.com/appear-polyfill@0.2.0/build/index.html",
   "dependencies": {

@@ -8,4 +8,7 @@ export default defineConfig({
     formats: ['umd', 'es2017'],
     minify: true,
   },
+  plugins: [
+    '@ice/pkg-plugin-docusaurus',
+  ],
 });

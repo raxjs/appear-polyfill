@@ -1,7 +1,6 @@
 /**
  * Simulate appear & disappear events.
  */
-import { supportsPassive } from './passive-event';
 import { createIntersectionObserver, destroyAllIntersectionObserver } from './intersection-observer-manager';
 import { SetupOptions, IntersectionObserverMode } from './types';
 
@@ -16,34 +15,74 @@ async function getIntersectionObserver(options?: SetupOptions) {
     SharedIntersectionObserver = window.IntersectionObserver;
   } else {
     // Initialize the polyfill only once.
-    if (!SharedIntersectionObserver && options?.loadIntersectionObserver) {
-      SharedIntersectionObserver = await options.loadIntersectionObserver?.();
+    if (!SharedIntersectionObserver && options?.intersectionObserverLoader) {
+      SharedIntersectionObserver = await options.intersectionObserverLoader?.();
     }
   }
 
   if (!SharedIntersectionObserver) {
-    throw new Error('IntersectionObserver is not available, please set loadIntersectionObserver properly.');
+    throw new Error('IntersectionObserver is not available, please set intersectionObserverLoader properly.');
   }
   return SharedIntersectionObserver;
 }
 
+const dehijackKey = '__dehijack__';
+const hijackListener = (Constructor: typeof Element, callback: (eventName: string) => void) => {
+  const nativeAddEventListener = Constructor.prototype.addEventListener;
+  // Avoid double hijack.
+  if (Constructor[dehijackKey]) return Constructor[dehijackKey];
+
+  function hijackAddEventListener(eventName) {
+    try {
+      callback.call(this, eventName);
+    } catch (e) {
+      console.warn('Error when calling appear polyfill listener.');
+      console.warn(e);
+    } finally {
+      return nativeAddEventListener.apply(this, arguments);
+    }
+  }
+
+  Constructor.prototype.addEventListener = hijackAddEventListener;
+  return function dehijack() {
+    Constructor.prototype.addEventListener = nativeAddEventListener;
+  };
+};
+
 // hijack Node.prototype.addEventListener
 function injectEventListenerHook(events: string[] = [], Node, observerElement) {
-  const nativeAddEventListener = Node.prototype.addEventListener;
-
-  Node.prototype.addEventListener = function hijackAddEventListener(eventName) {
+  function callback(eventName) {
     const lowerCaseEventName = String(eventName).toLowerCase();
 
     // Tip: String#indexOf is faster than other methods in most cases.
     const matchEvent = events.indexOf(lowerCaseEventName) > -1;
     if (matchEvent) observerElement(this);
+  }
 
-    return nativeAddEventListener.apply(this, arguments);
-  };
+  const teardownFns: Function[] = [];
+  teardownFns.push(
+    hijackListener(Node, callback)
+  );
+  // iOS <= 10.2.2, in App built-in WebView, `addEventListener` of `<div>` 
+  // and `<object>` are inconsistent with Node.prototype.addEventListener.
+  // The Node.prototype.addEventListener of the corresponding function is required.
+  if (HTMLDivElement.prototype.addEventListener !== Node.prototype.addEventListener) {
+    teardownFns.push(
+      hijackListener(HTMLDivElement, callback)
+    );
+  }
+  if (HTMLObjectElement.prototype.addEventListener !== Node.prototype.addEventListener) {
+    teardownFns.push(
+      hijackListener(HTMLObjectElement, callback)
+    );
+  }
 
   return function teardown() {
     destroyAllIntersectionObserver();
-    Node.prototype.addEventListener = nativeAddEventListener;
+    let fn;
+    while (fn = teardownFns.shift()) {
+      fn();
+    }
   };
 };
 
