@@ -1,7 +1,7 @@
-[![npm](https://img.shields.io/npm/v/rax-appear.svg)](https://www.npmjs.com/package/rax-appear)
+[![npm](https://img.shields.io/npm/v/rax-appear.svg)](https://www.npmjs.com/package/appear-polyfill)
 
 **描述：**
-封装了组件 Appear 和 Disappear 的监听。
+封装了 appear 和 disappear 事件监听的 Polyfill。
 
 ## 安装
 
@@ -11,50 +11,59 @@ $ npm install appear-polyfill --save
 
 ## 示例
 
-
 ```jsx
-import { createElement, render } from 'rax';
-import * as DriverDOM from 'driver-dom';
-import { isWeb } from 'universal-env';
+// app.js
+import { useEffect } from 'react';
 import { setupAppear } from 'appear-polyfill';
+setupAppear(window);
 
-if (isWeb) {
-  setupAppear(window);
+function App() {
+  useEffect(() => {
+    const item50 = document.getElementById('item50');
+
+    item50.addEventListener('appear', (event) => {
+      console.log('appear at', event.target, event);
+    });
+
+    item50.addEventListener('disappear', (event) => {
+      console.log('disappear at', event.target, event);
+    });
+  }, []);
+  return Array.from({ length: 100 })
+    .map((_, index) => (
+        <div id={`item${index}`} key={index} style={styles.item}>Item {index}</div>
+    ))
 }
-
-const list = [];
-for (let index = 1; index <= 100; index++) {
-  list.push(index);
-}
-
-render((
-  <div>
-    {list.map((item) => {
-      return (
-        <div
-          style={{
-            height: 100,
-            backgroundColor: '#ccc',
-            marginBottom: 20,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onAppear={(event) => {
-            console.log('appear: ', item, event.detail.direction);
-          }}
-          onDisappear={() => {
-            console.log('disappear: ', item, event.detail.direction);
-          }}
-        >
-          第 {item} 个
-        </div>
-      );
-    })}
-  </div>
-), document.body, { driver: DriverDOM });
+render(<App />);
 ```
 ## 配置项
+
+**intersectionObserverLoader**
+
+- 类型：`function`
+
+> Tip: 从 0.2.0 版本开始, appear-polyfill 移除了内置的 IntersectionObserver Polyfill，如有必要可以自行引入。
+
+用于在浏览器不支持 IntersectionObserver 的情况下，动态加载 IntersectionObserver Polyfill。
+
+```js
+import { setupAppear } from 'appear-polyfill';
+
+const INTERSECTION_OBSERVER_POLYFILL = 'https://cdn.jsdelivr.net/npm/intersection-observer@0.12.2/intersection-observer.js';
+function intersectionObserverLoader() {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    // Polyfill 加载完成后，会在 window 上挂载 IntersectionObserver 对象
+    script.onload = () => resolve(window.IntersectionObserver);
+    script.onerror = () => reject();
+    script.src = INTERSECTION_OBSERVER_POLYFILL;
+    document.head.appendChild(script);
+  });
+}
+
+// 启动监听
+setupAppear(window, { intersectionObserverLoader });
+```
 
 **preAppear**
 
@@ -64,7 +73,6 @@ render((
 
 ```jsx
 import { createElement, render } from 'rax';
-import DriverUniversal from 'driver-universal';
 import Image from 'rax-image';
 
 import { setupAppear } from 'appear-polyfill';
@@ -97,5 +105,5 @@ const App = () => {
   );
 };
 
-render(<App />, document.body, { driver: DriverUniversal });
+render(<App />, document.body);
 ```

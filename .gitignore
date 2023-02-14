@@ -10,3 +10,6 @@ build/
 dist/
 lib/
 es/
+esm/
+es2017/
+.docusaurus/
